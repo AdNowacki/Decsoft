@@ -1,6 +1,6 @@
 <template>
   <fieldset
-    :class="{ 'question--success': props.correct }"
+    :class="{ 'question--correct': props.correct, 'question--incorrect': props.incorrect }"
     class="question"
   >
     <label class="question__label">{{ label }}</label>
@@ -16,6 +16,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  incorrect: {
+    type: Boolean,
+    default: false
+  },
   label: {
     type: String,
     default: ''
@@ -26,16 +30,23 @@ const props = defineProps({
 
 <style scoped lang="scss">
 .question {
-  --q-form-success-border: #4caf50;
-  --q-form-success-bg: #b1e0c4;
+  --q-form-correct-border: #4caf50;
+  --q-form-correct-bg: #b1e0c4;
+  --q-form-incorrect-border: #c20f18;
+  --q-form-incorrect-bg: #efd1d2;
 
   text-align: left;
   margin: 0.6rem;
   border-radius: 0.5rem;
 
-  &--success {
-    background-color: var(--q-form-success-bg);
-    border: 1px solid var(--q-form-success-border);
+  &--correct {
+    background-color: var(--q-form-correct-bg);
+    border: 1px solid var(--q-form-correct-border);
+  }
+
+  &--incorrect {
+    background-color: var(--q-form-incorrect-bg);
+    border: 1px solid var(--q-form-incorrect-border);
   }
 
   &__label {

@@ -15,7 +15,9 @@
         v-for="q in questionsData" 
         :key="q.id" 
         :label="q.question"
-        :correct="sendedForm && isAnswerCorrect(q.id as string)">
+        :correct="sendedForm && isAnswerCorrect(q.id as string)"
+        :incorrect="sendedForm && !isAnswerCorrect(q.id as string)"
+      >
 
         <div class="q-form__control">
           <Radio
