@@ -32,12 +32,13 @@ import type { TQuestionItem } from '../../../types';
 import Btn from '../../common/Btn/Btn.vue';
 
 // composables
-const { questionsObjectsToArrayConverter, shuffle, removeQuestionsProperty } = useUtils()
+const { questionsObjectsToArrayConverter, shuffle } = useUtils()
 
 // refs
 const isTestStared = ref<boolean>(false)
 const questionsData = ref<Partial<TQuestionItem>[] | null>(null)
 const answersModel = ref<Record<string, string>>({})
+const correctAnswersStatistics = ref<Record<string, string>[]>([])
 
 // methods
 const startTest = (): void => {
@@ -47,29 +48,40 @@ const startTest = (): void => {
 
 const loadData = async () => {
   const { default: questions } = await import("../../../data/questions.json", { assert: { type: "json" } });
-  questionsData.value = shuffle(removeQuestionsProperty(questionsObjectsToArrayConverter(questions), 'good'))
+  questionsData.value = shuffle(questionsObjectsToArrayConverter(questions))
 }
 
-const isValidForm = () => {
+const isValidForm = async () => {
   return Object.keys(answersModel.value).length === questionsData.value?.length
 }
 
 const getCorrectAnswers = async () => {
   if (!questionsData.value) return
 
-  const { default: questions } = await import("../../../data/questions.json", { assert: { type: "json" } });
+  const { default: answers } = await import("../../../data/answers.json", { assert: { type: "json" } });
 
-  const q = questionsObjectsToArrayConverter(questions)
-  console.log(q)
+  const correctAnswers = Object.entries(questionsData.value).reduce((acc, [_, q]) => {
+    const questionId = q.id as string
+    const inputAnswers = answersModel.value[questionId]
+    const correctAnswer = answers[questionId as keyof typeof answers]
+
+    if (inputAnswers === correctAnswer) {
+      acc.push({ questionId, inputAnswers, correctAnswer })
+    }
+
+    return acc
+  }, [] as { questionId: string; inputAnswers: string; correctAnswer: string }[]) 
+
+  correctAnswersStatistics.value = correctAnswers
 }
 
-const sendForm = () => {
+const sendForm = async () => {
   if (!isValidForm()) {
     alert('Nie udzieliłeś odpowiedzi na wszystkie pytania')
     return
   }
 
-  getCorrectAnswers()
+  await getCorrectAnswers()
 }
 
 </script>

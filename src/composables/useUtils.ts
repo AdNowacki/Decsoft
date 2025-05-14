@@ -7,15 +7,6 @@ export const useUtils = () => {
     return Object.values(questions)
   }
 
-  const removeQuestionsProperty= (questions: TQuestionItem[], property: string): Partial<TQuestionItem>[] => {
-    if (!questions) return []
-
-    return questions.map((question) => {
-      const { [property]: propertyToRemove, ...rest } = question as Record<string, unknown>
-      return rest as Partial<TQuestionItem>
-    })    
-  }
-
   const shuffle = <T>(inputData: T[]): T[] => {
     if (!inputData) return [];
     
@@ -25,5 +16,5 @@ export const useUtils = () => {
       .map(({ value }) => value);
   }
 
-  return { questionsObjectsToArrayConverter, shuffle, removeQuestionsProperty }
+  return { questionsObjectsToArrayConverter, shuffle }
 }
