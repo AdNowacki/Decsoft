@@ -54,11 +54,22 @@ const isValidForm = () => {
   return Object.keys(answersModel.value).length === questionsData.value?.length
 }
 
+const getCorrectAnswers = async () => {
+  if (!questionsData.value) return
+
+  const { default: questions } = await import("../../../data/questions.json", { assert: { type: "json" } });
+
+  const q = questionsObjectsToArrayConverter(questions)
+  console.log(q)
+}
+
 const sendForm = () => {
   if (!isValidForm()) {
     alert('Nie udzieliłeś odpowiedzi na wszystkie pytania')
     return
   }
+
+  getCorrectAnswers()
 }
 
 </script>
