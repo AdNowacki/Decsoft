@@ -26,13 +26,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useConverter } from '../../../composables/useConverter';
+import { useUtils } from '../../../composables/useUtils';
 import type { TQuestionItem } from '../../../types';
 
 import Btn from '../../common/Btn/Btn.vue';
 
 // composables
-const { questionsObjectsToMapConverter, shuffle } = useConverter()
+const { questionsObjectsToMapConverter, shuffle } = useUtils()
 
 // refs
 const isTestStared = ref<boolean>(false)
@@ -50,8 +50,15 @@ const loadData = async () => {
   questionsData.value = shuffle(questionsObjectsToMapConverter(questions))
 }
 
+const isValidForm = () => {
+  return Object.keys(answersModel.value).length === questionsData.value?.length
+}
+
 const sendForm = () => {
-  console.log(answersModel.value)
+  if (!isValidForm()) {
+    alert('Nie udzieliłeś odpowiedzi na wszystkie pytania')
+    return
+  }
 }
 
 </script>

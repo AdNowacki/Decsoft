@@ -1,6 +1,6 @@
 import type { TQuestions, TQuestionItem } from '../types'
 
-export const useConverter = () => {
+export const useUtils = () => {
   const questionsObjectsToMapConverter = (questions: TQuestions): Partial<TQuestionItem>[] => {
     if (!questions) return []
 
