@@ -1,10 +1,19 @@
 import type { TQuestions, TQuestionItem } from '../types'
 
 export const useUtils = () => {
-  const questionsObjectsToMapConverter = (questions: TQuestions): Partial<TQuestionItem>[] => {
+  const questionsObjectsToArrayConverter = (questions: TQuestions): TQuestionItem[] => {
     if (!questions) return []
 
-    return Object.values(questions).map(({ id, question, answers }) => ({ id, question, answers }))
+    return Object.values(questions)
+  }
+
+  const removeQuestionsProperty= (questions: TQuestionItem[], property: string): Partial<TQuestionItem>[] => {
+    if (!questions) return []
+
+    return questions.map((question) => {
+      const { [property]: propertyToRemove, ...rest } = question as Record<string, unknown>
+      return rest as Partial<TQuestionItem>
+    })    
   }
 
   const shuffle = <T>(inputData: T[]): T[] => {
@@ -16,5 +25,5 @@ export const useUtils = () => {
       .map(({ value }) => value);
   }
 
-  return { questionsObjectsToMapConverter, shuffle }
+  return { questionsObjectsToArrayConverter, shuffle, removeQuestionsProperty }
 }

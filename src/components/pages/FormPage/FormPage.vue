@@ -32,7 +32,7 @@ import type { TQuestionItem } from '../../../types';
 import Btn from '../../common/Btn/Btn.vue';
 
 // composables
-const { questionsObjectsToMapConverter, shuffle } = useUtils()
+const { questionsObjectsToArrayConverter, shuffle, removeQuestionsProperty } = useUtils()
 
 // refs
 const isTestStared = ref<boolean>(false)
@@ -47,7 +47,7 @@ const startTest = (): void => {
 
 const loadData = async () => {
   const { default: questions } = await import("../../../data/questions.json", { assert: { type: "json" } });
-  questionsData.value = shuffle(questionsObjectsToMapConverter(questions))
+  questionsData.value = shuffle(removeQuestionsProperty(questionsObjectsToArrayConverter(questions), 'good'))
 }
 
 const isValidForm = () => {
