@@ -1,5 +1,8 @@
 <template>
   <div class="page page--form">
+    <div>
+      
+    </div>
     <header v-if="!isTestStared">
       <h1>Przystępujesz do krótkiego testu jednokrotnego wyboru. Naciśnij przycisk aby rozpocząć</h1>
       <Btn @click="startTest()" size="sm" variant="outline-secondary">Rozpocznij test</Btn>
@@ -8,7 +11,11 @@
     <form @submit.prevent="() => null" class="q-form" v-else>
       <h2>Ponizej znajdują się losowe pytania jednokrotnego wyboru</h2>
   
-      <fieldset class="q-form__group"  v-for="q in questionsData" :key="q.id">
+      <fieldset
+        :class="{ 'q-form__group--success': sendedForm && isAnswerCorrect(q.id as string) }"
+        class="q-form__group"  v-for="q in questionsData"
+        :key="q.id"
+      >
         <label class="q-form__label-decor">{{ q.question }}</label>
   
         <div class="q-form__control">
@@ -19,13 +26,16 @@
         </div>
       </fieldset>
 
-      <Btn @click="sendForm" size="sm" variant="outline-secondary">Wyślij</Btn>
+      <Btn v-if="!sendedForm" @click="sendForm" size="sm" variant="outline-secondary">Wyślij</Btn>
+      <output v-else>
+        {{ statisticInfo }} 
+      </output>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import { useUtils, useValidators } from '../../../composables';
 import type { TQuestionItem } from '../../../types';
 
@@ -40,6 +50,12 @@ const isTestStared = ref<boolean>(false)
 const questionsData = ref<Partial<TQuestionItem>[] | null>(null)
 const answersModel = ref<Record<string, string>>({})
 const correctAnswersStatistics = ref<Record<string, string>[]>([])
+const sendedForm = ref<boolean>(false)
+
+// computed
+const statisticInfo = computed(() => {
+  return `Udzieliłeś ${correctAnswersStatistics.value.length} z ${questionsData.value?.length} poprawnych odpowiedzi`
+})
 
 // methods
 const startTest = (): void => {
@@ -78,17 +94,39 @@ const sendForm = async () => {
     return
   }
 
+  sendedForm.value = true
   await getCorrectAnswers()
 }
 
+const isAnswerCorrect = (questionId: string): boolean => {
+  return correctAnswersStatistics.value.some((item) => item.questionId === questionId)
+}
+
+const clearComponent = () => {
+  isTestStared.value = false
+  questionsData.value = null
+  answersModel.value = {}
+  correctAnswersStatistics.value = []
+  sendedForm.value = false
+}
+
+onUnmounted(() => clearComponent())
 </script>
 
 <style lang="scss" scoped>
 .q-form {
+  --q-form-success-border: #4caf50;
+  --q-form-success-bg: #b1e0c4;
+
   &__group {
     text-align: left;
     margin: 0.6rem;
     border-radius: 0.5rem;
+
+    &--success {
+      background-color: var(--q-form-success-bg);
+      border: 1px solid var(--q-form-success-border);
+    }
   }
 
   &__label-decor {
