@@ -28,8 +28,6 @@ const props = defineProps({
   }
 })
 
-console.log(props)
-
 // computed
 const componentClasses = computed(() => {
   return {

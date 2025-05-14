@@ -10,21 +10,24 @@
 
     <form @submit.prevent="() => null" class="q-form" v-else>
       <h2>Ponizej znajdują się losowe pytania jednokrotnego wyboru</h2>
-  
-      <fieldset
-        :class="{ 'q-form__group--success': sendedForm && isAnswerCorrect(q.id as string) }"
-        class="q-form__group"  v-for="q in questionsData"
-        :key="q.id"
-      >
-        <label class="q-form__label-decor">{{ q.question }}</label>
-  
+
+      <Question
+        v-for="q in questionsData" 
+        :key="q.id" 
+        :label="q.question"
+        :correct="sendedForm && isAnswerCorrect(q.id as string)">
+
         <div class="q-form__control">
-          <label v-for="answer in q.answers" :key="answer" class="q-form__label-default">
-            <input v-model="answersModel[q.id as string]" type="radio" :name="q.id" :value="answer" />
-            {{ answer }}
-          </label>
+          <Radio
+            v-model="answersModel[q.id as string]"
+            v-for="answer in q.answers"
+            :key="answer"
+            :label="answer"
+            :value="answer"
+            :name="q.id" 
+          />
         </div>
-      </fieldset>
+      </Question>
 
       <Btn v-if="!sendedForm" @click="sendForm" size="sm" variant="outline-secondary">Wyślij</Btn>
       <output v-else>
@@ -35,11 +38,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from 'vue';
+import { ref, computed, onUnmounted, watch } from 'vue';
 import { useUtils, useValidators } from '../../../composables';
-import type { TQuestionItem } from '../../../types';
+import type { TQuestionItem, TStatisticsAnswers } from '../../../types';
 
 import Btn from '../../common/Btn/Btn.vue';
+import Question from '../../common/Btn/Question/Question.vue';
+import Radio from '../../form/Radio/Radio.vue';
 
 // composables
 const { questionsObjectsToArrayConverter, shuffle } = useUtils()
@@ -49,7 +54,7 @@ const { isTestFormValid } = useValidators()
 const isTestStared = ref<boolean>(false)
 const questionsData = ref<Partial<TQuestionItem>[] | null>(null)
 const answersModel = ref<Record<string, string>>({})
-const correctAnswersStatistics = ref<Record<string, string>[]>([])
+const correctAnswersStatistics = ref<TStatisticsAnswers[]>([])
 const sendedForm = ref<boolean>(false)
 
 // computed
@@ -83,7 +88,7 @@ const getCorrectAnswers = async () => {
     }
 
     return acc
-  }, [] as { questionId: string; inputAnswers: string; correctAnswer: string }[]) 
+  }, [] as TStatisticsAnswers[]) 
 
   correctAnswersStatistics.value = correctAnswers
 }
@@ -99,10 +104,10 @@ const sendForm = async () => {
 }
 
 const isAnswerCorrect = (questionId: string): boolean => {
-  return correctAnswersStatistics.value.some((item) => item.questionId === questionId)
+  return correctAnswersStatistics.value.some((item: TStatisticsAnswers) => item.questionId === questionId)
 }
 
-const clearComponent = () => {
+const resetComponent = () => {
   isTestStared.value = false
   questionsData.value = null
   answersModel.value = {}
@@ -110,32 +115,5 @@ const clearComponent = () => {
   sendedForm.value = false
 }
 
-onUnmounted(() => clearComponent())
+onUnmounted(() => resetComponent())
 </script>
-
-<style lang="scss" scoped>
-.q-form {
-  --q-form-success-border: #4caf50;
-  --q-form-success-bg: #b1e0c4;
-
-  &__group {
-    text-align: left;
-    margin: 0.6rem;
-    border-radius: 0.5rem;
-
-    &--success {
-      background-color: var(--q-form-success-bg);
-      border: 1px solid var(--q-form-success-border);
-    }
-  }
-
-  &__label-decor {
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-
-  &__label-default {
-    font-size: 1rem;
-  }
-}
-</style>

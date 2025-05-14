@@ -8,3 +8,9 @@ export type TQuestionItem = {
 export type TQuestions = {
   [key: string]: TQuestionItem
 }
+
+export type TStatisticsAnswers = {
+  questionId: string;
+  inputAnswers: string;
+  correctAnswer: string
+}
