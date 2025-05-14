@@ -4,7 +4,8 @@
       
     </div>
     <header v-if="!isTestStared">
-      <h1>Przystępujesz do krótkiego testu jednokrotnego wyboru. Naciśnij przycisk aby rozpocząć</h1>
+      <h2>Przystępujesz do krótkiego testu jednokrotnego wyboru. Naciśnij przycisk aby rozpocząć</h2>
+      <Number v-model="maxQuestionsModel" block :min="1" :max="200" :step="1" placeholder="Ile pytań?" class="max-questions" />
       <Btn @click="startTest()" size="sm" variant="outline-secondary">Rozpocznij test</Btn>
     </header>
 
@@ -12,7 +13,7 @@
       <h2>Ponizej znajdują się losowe pytania jednokrotnego wyboru</h2>
 
       <Question
-        v-for="q in questionsData" 
+        v-for="q in questionsDataFiltered" 
         :key="q.id" 
         :label="q.question"
         :correct="sendedForm && isAnswerCorrect(q.id as string)"
@@ -34,19 +35,21 @@
       <Btn v-if="!sendedForm" @click="sendForm" size="sm" variant="outline-secondary">Wyślij</Btn>
       <output v-else>
         {{ statisticInfo }} 
+        <Btn @click="restartForm" size="sm" variant="outline-secondary" block>Spróbuj jeszcze raz</Btn>
       </output>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onUnmounted, watch } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import { useUtils, useValidators } from '../../../composables';
 import type { TQuestionItem, TStatisticsAnswers } from '../../../types';
 
 import Btn from '../../common/Btn/Btn.vue';
 import Question from '../../common/Btn/Question/Question.vue';
 import Radio from '../../form/Radio/Radio.vue';
+import Number from '../../form/Number/Number.vue';
 
 // composables
 const { questionsObjectsToArrayConverter, shuffle } = useUtils()
@@ -56,18 +59,30 @@ const { isTestFormValid } = useValidators()
 const isTestStared = ref<boolean>(false)
 const questionsData = ref<Partial<TQuestionItem>[] | null>(null)
 const answersModel = ref<Record<string, string>>({})
+
 const correctAnswersStatistics = ref<TStatisticsAnswers[]>([])
 const sendedForm = ref<boolean>(false)
 
 // computed
 const statisticInfo = computed(() => {
-  return `Udzieliłeś ${correctAnswersStatistics.value.length} z ${questionsData.value?.length} poprawnych odpowiedzi`
+  return `Udzieliłeś ${correctAnswersStatistics.value.length} z ${questionsDataFiltered.value?.length} poprawnych odpowiedzi`
 })
+
+const questionsDataFiltered = computed(() => {
+  return questionsData.value ? questionsData.value.slice(0, maxQuestionsModel.value) : []
+})
+
+const maxQuestionsModel = ref<number>(20)
+
 
 // methods
 const startTest = (): void => {
   loadData()
   isTestStared.value = true
+}
+
+const restartForm = () => {
+  resetComponent()
 }
 
 const loadData = async () => {
@@ -76,11 +91,11 @@ const loadData = async () => {
 }
 
 const getCorrectAnswers = async () => {
-  if (!questionsData.value) return
+  if (!questionsDataFiltered.value) return
 
   const { default: answers } = await import("../../../data/answers.json", { assert: { type: "json" } });
 
-  const correctAnswers = Object.entries(questionsData.value).reduce((acc, [_, q]) => {
+  const correctAnswers = Object.entries(questionsDataFiltered.value).reduce((acc, [_, q]) => {
     const questionId = q.id as string
     const inputAnswers = answersModel.value[questionId]
     const correctAnswer = answers[questionId as keyof typeof answers]
@@ -96,7 +111,7 @@ const getCorrectAnswers = async () => {
 }
 
 const sendForm = async () => {
-  if (!isTestFormValid(answersModel.value, questionsData.value)) {
+  if (!isTestFormValid(answersModel.value, questionsDataFiltered.value)) {
     alert('Nie udzieliłeś odpowiedzi na wszystkie pytania')
     return
   }
@@ -115,7 +130,15 @@ const resetComponent = () => {
   answersModel.value = {}
   correctAnswersStatistics.value = []
   sendedForm.value = false
+  maxQuestionsModel.value = 20
 }
 
 onUnmounted(() => resetComponent())
 </script>
+
+<style lang="scss" scoped>
+.max-questions {
+  margin: 0.6rem auto;
+  width: 120px;
+}
+</style>
