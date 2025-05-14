@@ -26,13 +26,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useUtils } from '../../../composables/useUtils';
+import { useUtils, useValidators } from '../../../composables';
 import type { TQuestionItem } from '../../../types';
 
 import Btn from '../../common/Btn/Btn.vue';
 
 // composables
 const { questionsObjectsToArrayConverter, shuffle } = useUtils()
+const { isTestFormValid } = useValidators()
 
 // refs
 const isTestStared = ref<boolean>(false)
@@ -49,10 +50,6 @@ const startTest = (): void => {
 const loadData = async () => {
   const { default: questions } = await import("../../../data/questions.json", { assert: { type: "json" } });
   questionsData.value = shuffle(questionsObjectsToArrayConverter(questions))
-}
-
-const isValidForm = async () => {
-  return Object.keys(answersModel.value).length === questionsData.value?.length
 }
 
 const getCorrectAnswers = async () => {
@@ -76,7 +73,7 @@ const getCorrectAnswers = async () => {
 }
 
 const sendForm = async () => {
-  if (!isValidForm()) {
+  if (!isTestFormValid(answersModel.value, questionsData.value)) {
     alert('Nie udzieliłeś odpowiedzi na wszystkie pytania')
     return
   }
