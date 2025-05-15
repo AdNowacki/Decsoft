@@ -1,7 +1,11 @@
 <template>
   <div class="page page--form">
     <header v-if="!isTestStared">
-      <h3>Przystępujesz do krótkiego testu jednokrotnego wyboru. <br />Wybierz maksymalną ilość pytań i naciśnij przycisk aby rozpocząć</h3>
+      <h3>
+        Przystępujesz do krótkiego testu jednokrotnego wyboru. <br />
+        Wybierz maksymalną ilość pytań i naciśnij przycisk aby rozpocząć<br />
+        Na ukończenie będziesz miał {{ testDurationAsSeconds }} sekund. Po tym czasie wrócisz na tą stronę
+      </h3>
       <Number v-model="maxQuestionsModel" block :min="1" :max="200" :step="1" placeholder="Ile pytań?" class="max-questions" />
       <Btn @click="startTest()" size="sm" variant="outline-secondary">Rozpocznij test</Btn>
     </header>
@@ -35,8 +39,12 @@
       </div>
       <output v-else>
         {{ statisticInfo }} 
-        <Btn @click="restartTest" size="sm" variant="outline-secondary" block>Spróbuj jeszcze raz</Btn>
+        <Btn @click="resetComponent" size="sm" variant="outline-secondary" block>Spróbuj jeszcze raz</Btn>
       </output>
+
+      <span class="countdown">
+        {{ timeLeft }} sekund
+      </span>
     </form>
   </div>
 </template>
@@ -45,6 +53,7 @@
 import { ref, computed, onUnmounted } from 'vue';
 import { isTestFormValid, questionsObjectsToArrayConverter, shuffle } from '../../../utils'
 import type { TQuestionItem, TStatisticsAnswers } from '../../../types';
+import { TEST_DURATION } from '../../../constants'
 
 import Btn from '../../common/Btn/Btn.vue';
 import Question from '../../common/Btn/Question/Question.vue';
@@ -59,16 +68,16 @@ const questionsData = ref<Partial<TQuestionItem>[] | null>(null)
 const answersModel = ref<Record<string, string>>({})
 const correctAnswersStatistics = ref<TStatisticsAnswers[]>([])
 const sendedForm = ref<boolean>(false)
+const testDuration = ref<number>(TEST_DURATION)
+const timer = ref<number | null>(null)
+const elapsedTime = ref<number>(0)
 const testId = 'test1'
 
 // computed
-const statisticInfo = computed(() => {
-  return `Udzieliłeś ${correctAnswersStatistics.value.length} z ${questionsDataFiltered.value?.length} poprawnych odpowiedzi`
-})
-
-const questionsDataFiltered = computed(() => {
-  return questionsData.value ? questionsData.value.slice(0, maxQuestionsModel.value) : []
-})
+const statisticInfo = computed(() => `Udzieliłeś ${correctAnswersStatistics.value.length} z ${questionsDataFiltered.value?.length} poprawnych odpowiedzi`)
+const questionsDataFiltered = computed(() => questionsData.value ? questionsData.value.slice(0, maxQuestionsModel.value) : [])
+const testDurationAsSeconds = computed(() => testDuration.value / 1000)
+const timeLeft = computed(() => (testDuration.value - elapsedTime.value) / 1000)
 
 const maxQuestionsModel = ref<number>(20)
 
@@ -76,9 +85,21 @@ const maxQuestionsModel = ref<number>(20)
 const startTest = (): void => {
   loadData()
   isTestStared.value = true
+  countdown()
 }
 
-const restartTest = () => resetComponent()
+const countdown = () => {
+  timer.value = setInterval(() => {
+    elapsedTime.value += 1000
+    if (elapsedTime.value === testDuration.value) {
+      clearCountdown()
+      resetComponent()
+      return
+    }
+  }, 1000)
+}
+
+const clearCountdown = () => clearInterval(timer.value as number)
 
 const loadData = async () => {
   const { default: tests } = await import("../../../data/questions.json", { assert: { type: "json" } });
@@ -115,6 +136,7 @@ const sendForm = async () => {
   }
 
   sendedForm.value = true
+  clearCountdown()
   await getCorrectAnswers()
 }
 
@@ -131,6 +153,8 @@ const resetComponent = () => {
   correctAnswersStatistics.value = []
   sendedForm.value = false
   maxQuestionsModel.value = 20
+  elapsedTime.value = 0
+  clearCountdown()
 }
 
 onUnmounted(() => resetComponent())
@@ -150,5 +174,16 @@ onUnmounted(() => resetComponent())
   @media print {
     display: none;
   }
+}
+
+.countdown {
+  position: fixed;
+  width: 110px;
+  right: 20px;
+  bottom: 20px;
+  padding: 10px;
+  z-index: 2;
+  border-radius: 4px;
+  border: 1px solid var(--border-color-default);
 }
 </style>

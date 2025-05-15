@@ -1,0 +1,1 @@
+export const TEST_DURATION = 0.3 * 60 * 1000
