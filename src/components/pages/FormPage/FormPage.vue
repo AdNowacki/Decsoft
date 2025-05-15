@@ -1,7 +1,7 @@
 <template>
   <div class="page page--form">
     <FormHeader
-      v-if="!isTestStared"
+      v-if="!isTestStarted"
       v-model="maxQuestionsModel"
       :test-duration-as-seconds="testDurationAsSeconds"
       @click="startTest()" 
@@ -54,7 +54,7 @@ import FormHeader from '../../form/FormHeader/FormHeader.vue';
 import InfoAlert from '../../common/InfoAlert/InfoAlert.vue';
 
 // refs
-const isTestStared = ref<boolean>(false)
+const isTestStarted = ref<boolean>(false)
 const questionsData = ref<Partial<TQuestionItem>[] | null>(null)
 const answersModel = ref<Record<string, string>>({})
 const correctAnswersStatistics = ref<TStatisticsAnswers[]>([])
@@ -75,7 +75,7 @@ const maxQuestionsModel = ref<number>(20)
 // methods
 const startTest = (): void => {
   loadData()
-  isTestStared.value = true
+  isTestStarted.value = true
   countdown()
 }
 
@@ -138,7 +138,7 @@ const isAnswerCorrect = (questionId: string): boolean => {
 }
 
 const resetComponent = () => {
-  isTestStared.value = false
+  isTestStarted.value = false
   questionsData.value = null
   answersModel.value = {}
   correctAnswersStatistics.value = []
