@@ -55,7 +55,7 @@ import InfoAlert from '../../common/InfoAlert/InfoAlert.vue';
 
 // refs
 const isTestStarted = ref<boolean>(false)
-const questionsData = ref<Partial<TQuestionItem>[] | null>(null)
+const questionsData = ref<TQuestionItem[] | null>(null)
 const answersModel = ref<Record<string, string>>({})
 const correctAnswersStatistics = ref<TStatisticsAnswers[]>([])
 const sendedForm = ref<boolean>(false)
