@@ -56,6 +56,7 @@ const questionsData = ref<Partial<TQuestionItem>[] | null>(null)
 const answersModel = ref<Record<string, string>>({})
 const correctAnswersStatistics = ref<TStatisticsAnswers[]>([])
 const sendedForm = ref<boolean>(false)
+const testId = 'test1'
 
 // computed
 const statisticInfo = computed(() => {
@@ -77,15 +78,18 @@ const startTest = (): void => {
 const restartTest = () => resetComponent()
 
 const loadData = async () => {
-  const { default: questions } = await import("../../../data/questions.json", { assert: { type: "json" } });
+  const { default: tests } = await import("../../../data/questions.json", { assert: { type: "json" } });
+  // @TODO - na tę chwilę id testu jest zahardcodowane, docelowo byłoby brane z query url, np. test=test1
+  const questions = tests[testId]
   questionsData.value = shuffle(questionsObjectsToArrayConverter(questions))
 }
 
 const getCorrectAnswers = async () => {
   if (!questionsDataFiltered.value) return
 
-  const { default: answers } = await import("../../../data/answers.json", { assert: { type: "json" } });
-
+  const { default: tests } = await import("../../../data/answers.json", { assert: { type: "json" } });
+  // @TODO - na tę chwilę id testu jest zahardcodowane, docelowo byłoby brane z query url, np. test=test1
+  const answers = tests[testId]
   const correctAnswers = Object.entries(questionsDataFiltered.value).reduce((acc, [_, q]) => {
     const questionId = q.id as string
     const inputAnswers = answersModel.value[questionId]
