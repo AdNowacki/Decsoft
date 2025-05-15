@@ -5,6 +5,12 @@ Wymagania środowiskowe
 >
 > yarn v1.22.22
 
+## Jak uruchomić?
+1. Pobierz repozytorium
+2. Zainstaluj zaleności `yarn install`
+3. Uruchom serwer `yarn dev`
+
+## Zadanie
 Przygotuj aplikację pozwalającą na rozwiązanie testu jednokrotnego wyboru przy użyciu Vue 3.
 Postępy implementacji dokumentuj przesyłając kod do repozytorium np. na Github.
 1. Aplikacja powinna pobierać zbiór pytań z pliku (w dowolnym formacie twojego pomysłu) lub
