@@ -62,6 +62,7 @@ const sendedForm = ref<boolean>(false)
 const testDuration = ref<number>(TEST_DURATION)
 const timer = ref<number | null>(null)
 const elapsedTime = ref<number>(0)
+const maxQuestionsModel = ref<number>(20)
 const testId = 'test1'
 
 // computed
@@ -69,8 +70,6 @@ const statisticInfo = computed(() => `Udzieliłeś ${correctAnswersStatistics.va
 const questionsDataFiltered = computed(() => questionsData.value ? questionsData.value.slice(0, maxQuestionsModel.value) : [])
 const testDurationAsSeconds = computed(() => testDuration.value / 1000)
 const timeLeft = computed(() => `${(testDuration.value - elapsedTime.value) / 1000} sekund`)
-
-const maxQuestionsModel = ref<number>(20)
 
 // methods
 const startTest = (): void => {
