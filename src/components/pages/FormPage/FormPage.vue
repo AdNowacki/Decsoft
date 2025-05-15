@@ -34,9 +34,9 @@
       </div>
       <output v-else>
         {{ statisticInfo }} 
-        <Btn @click="resetComponent" size="sm" variant="outline-secondary" block>Spróbuj jeszcze raz</Btn>
+        <Btn @click="resetComponent" size="sm" variant="outline-secondary" block>{{ resetButtonLabel }}</Btn>
       </output>
-      <InfoAlert :content="timeLeft" />
+      <InfoAlert v-if="!sendedForm" :content="timeLeft" />
     </form>
   </div>
 </template>
@@ -66,7 +66,11 @@ const maxQuestionsModel = ref<number>(20)
 const testId = 'test1'
 
 // computed
-const statisticInfo = computed(() => `Udzieliłeś ${correctAnswersStatistics.value.length} z ${questionsDataFiltered.value?.length} poprawnych odpowiedzi`)
+const allAnswersCorect = computed(() => correctAnswersStatistics.value.length === questionsDataFiltered.value?.length)
+const statisticInfo = computed(() => {
+  return allAnswersCorect ? 'Brawo! Na wszystkie pytania odpowiedziałeś poprawnie' : `Udzieliłeś ${correctAnswersStatistics.value.length} z ${questionsDataFiltered.value?.length} poprawnych odpowiedzi`
+})
+const resetButtonLabel = computed(() => allAnswersCorect ? 'Wróć na stronę główną' : 'Spróbuj jeszcze raz')
 const questionsDataFiltered = computed(() => questionsData.value ? questionsData.value.slice(0, maxQuestionsModel.value) : [])
 const testDurationAsSeconds = computed(() => testDuration.value / 1000)
 const timeLeft = computed(() => `${(testDuration.value - elapsedTime.value) / 1000} sekund`)
