@@ -72,7 +72,7 @@ const testDurationAsSeconds = computed(() => testDuration.value / 1000)
 const timeLeft = computed(() => `${(testDuration.value - elapsedTime.value) / 1000} sekund`)
 
 // methods
-const startTest = (): void => {
+const startTest = () => {
   loadData()
   isTestStarted.value = true
   countdown()
