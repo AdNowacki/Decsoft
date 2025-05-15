@@ -88,7 +88,6 @@ const countdown = () => {
     if (elapsedTime.value === testDuration.value) {
       clearCountdown()
       resetComponent()
-      return
     }
   }, 1000)
 }
