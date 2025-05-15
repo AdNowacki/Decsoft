@@ -29,7 +29,10 @@
         </div>
       </Question>
 
-      <Btn v-if="!sendedForm" @click="sendForm" size="sm" variant="outline-secondary">Wyślij</Btn>
+      <div v-if="!sendedForm" class="form-actions">
+        <Btn @click="sendForm" size="sm" variant="outline-secondary">Wyślij</Btn>
+        <Btn @click="printForm" size="sm" variant="outline-secondary" class="form-actions__print">Wydrukuj</Btn>
+      </div>
       <output v-else>
         {{ statisticInfo }} 
         <Btn @click="restartTest" size="sm" variant="outline-secondary" block>Spróbuj jeszcze raz</Btn>
@@ -115,6 +118,8 @@ const sendForm = async () => {
   await getCorrectAnswers()
 }
 
+const printForm = () => window.print();
+
 const isAnswerCorrect = (questionId: string): boolean => {
   return correctAnswersStatistics.value.some((item: TStatisticsAnswers) => item.questionId === questionId)
 }
@@ -135,5 +140,15 @@ onUnmounted(() => resetComponent())
 .max-questions {
   margin: 0.6rem auto;
   width: 120px;
+}
+
+.form-actions {
+  &__print {
+    margin-left: 10px;
+  }
+
+  @media print {
+    display: none;
+  }
 }
 </style>

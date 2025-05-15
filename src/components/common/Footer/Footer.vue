@@ -20,5 +20,9 @@
       text-decoration: underline dashed;
     }
   }
+
+  @media print {
+    display: none;
+  }
 }
 </style>

@@ -30,5 +30,9 @@ const props = defineProps({
 <style scoped lang="scss">
 .radio {
   font-size: 1rem;
+
+  @media print {
+    font-size: 0.8rem;
+  }
 }
 </style>

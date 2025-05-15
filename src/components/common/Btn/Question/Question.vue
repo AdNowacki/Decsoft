@@ -52,6 +52,10 @@ const props = defineProps({
   &__label {
     font-size: 1.2rem;
     font-weight: bold;
+
+    @media print {
+      font-size: 0.9rem;
+    }
   }
 }
 </style>

@@ -39,6 +39,46 @@
         "id": "Q8",
         "question": "Ile kilometórw w przybliżeniu mierzy trasa z Warszawy na Nordkapp, jadąc samochodem przez Estonię i Finlandię?",
         "answers": ["1500", "2600", "3000", "3600"]
+      },
+      "Q10": {
+        "id": "Q10",
+        "question": "Co jest stolicą Finlandii",
+        "answers": ["Berlin", "Warszawa", "Helsinki", "Rzym"]
+      },
+      "Q20": {
+        "id": "Q20",
+        "question": "Która planeta w Układzie Słonecznym jest największa?",
+        "answers": ["Ziemia", "Jowisz", "Mars", "Saturn"]
+      },
+      "Q30": {
+        "id": "Q30",
+        "question": "Jaki symbol chmiczny ma srebro?",
+        "answers": ["Au", "Ag", "Pb", "Fe"]
+      },
+      "Q40": {
+        "id": "Q40",
+        "question": "Ile kontynentów posiada nasza planeta?",
+        "answers": ["6", "4", "7", "9"]
+      },
+      "Q50": {
+        "id": "Q50",
+        "question": "W którym roku była Bitwa pod Grunwaldem?",
+        "answers": ["1408", "1415", "1400", "1410"]
+      },
+      "Q60": {
+        "id": "Q60",
+        "question": "Które Państwo nie należy do Skandynawii?",
+        "answers": ["Szwecja", "Norwegia", "Finlandia", "Dania"]
+      },
+      "Q70": {
+        "id": "Q70",
+        "question": "Najmniejsze województwo w Polsce to?",
+        "answers": ["Lubuskie", "Podlaskie", "Zachodniopomorskie", "Opolskie"]
+      },
+      "Q80": {
+        "id": "Q80",
+        "question": "Ile kilometórw w przybliżeniu mierzy trasa z Warszawy na Nordkapp, jadąc samochodem przez Estonię i Finlandię?",
+        "answers": ["1500", "2600", "3000", "3600"]
       }
   },
   "test2": {

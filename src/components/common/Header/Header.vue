@@ -43,6 +43,10 @@
       @media screen and (min-width: 560px) {
         width: 180px;
       }
+
+      @media print {
+        width: 180px;
+      }
     }
   }
 
@@ -60,6 +64,10 @@
         text-decoration: underline dashed;
       }
     }
+
+    @media print {
+      display: none;
+    }
   }
 
   &-hero {
@@ -67,6 +75,10 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+
+    @media print {
+      display: none;
     }
   }
 }
