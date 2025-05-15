@@ -1,15 +1,11 @@
 <template>
   <div class="page page--form">
-    <header v-if="!isTestStared">
-      <h3>
-        Przystępujesz do krótkiego testu jednokrotnego wyboru. <br />
-        Wybierz maksymalną ilość pytań i naciśnij przycisk aby rozpocząć<br />
-        Na ukończenie będziesz miał {{ testDurationAsSeconds }} sekund. Po tym czasie wrócisz na tą stronę
-      </h3>
-      <Number v-model="maxQuestionsModel" block :min="1" :max="200" :step="1" placeholder="Ile pytań?" class="max-questions" />
-      <Btn @click="startTest()" size="sm" variant="outline-secondary">Rozpocznij test</Btn>
-    </header>
-
+    <FormHeader
+      v-if="!isTestStared"
+      v-model="maxQuestionsModel"
+      :test-duration-as-seconds="testDurationAsSeconds"
+      @click="startTest()" 
+    />
     <form @submit.prevent="() => null" class="q-form" v-else>
       <h2>Ponizej znajdują się losowe pytania jednokrotnego wyboru</h2>
 
@@ -20,7 +16,6 @@
         :correct="sendedForm && isAnswerCorrect(q.id as string)"
         :incorrect="sendedForm && !isAnswerCorrect(q.id as string)"
       >
-
         <div class="q-form__control">
           <Radio
             v-model="answersModel[q.id as string]"
@@ -41,10 +36,7 @@
         {{ statisticInfo }} 
         <Btn @click="resetComponent" size="sm" variant="outline-secondary" block>Spróbuj jeszcze raz</Btn>
       </output>
-
-      <span class="countdown">
-        {{ timeLeft }} sekund
-      </span>
+      <InfoAlert :content="timeLeft" />
     </form>
   </div>
 </template>
@@ -58,9 +50,8 @@ import { TEST_DURATION } from '../../../constants'
 import Btn from '../../common/Btn/Btn.vue';
 import Question from '../../common/Btn/Question/Question.vue';
 import Radio from '../../form/Radio/Radio.vue';
-import Number from '../../form/Number/Number.vue';
-
-// composables
+import FormHeader from '../../form/FormHeader/FormHeader.vue';
+import InfoAlert from '../../common/InfoAlert/InfoAlert.vue';
 
 // refs
 const isTestStared = ref<boolean>(false)
@@ -77,7 +68,7 @@ const testId = 'test1'
 const statisticInfo = computed(() => `Udzieliłeś ${correctAnswersStatistics.value.length} z ${questionsDataFiltered.value?.length} poprawnych odpowiedzi`)
 const questionsDataFiltered = computed(() => questionsData.value ? questionsData.value.slice(0, maxQuestionsModel.value) : [])
 const testDurationAsSeconds = computed(() => testDuration.value / 1000)
-const timeLeft = computed(() => (testDuration.value - elapsedTime.value) / 1000)
+const timeLeft = computed(() => `${(testDuration.value - elapsedTime.value) / 1000} sekund`)
 
 const maxQuestionsModel = ref<number>(20)
 
@@ -161,11 +152,6 @@ onUnmounted(() => resetComponent())
 </script>
 
 <style lang="scss" scoped>
-.max-questions {
-  margin: 0.6rem auto;
-  width: 120px;
-}
-
 .form-actions {
   &__print {
     margin-left: 10px;
@@ -174,16 +160,5 @@ onUnmounted(() => resetComponent())
   @media print {
     display: none;
   }
-}
-
-.countdown {
-  position: fixed;
-  width: 110px;
-  right: 20px;
-  bottom: 20px;
-  padding: 10px;
-  z-index: 2;
-  border-radius: 4px;
-  border: 1px solid var(--border-color-default);
 }
 </style>
