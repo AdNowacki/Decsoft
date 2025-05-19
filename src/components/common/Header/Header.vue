@@ -2,8 +2,8 @@
   <header class="header">
     <nav class="header-nav">
       <picture>
-        <source srcset="/decsoft-logo.jpg" type="image/jpeg" />
         <source srcset="/decsoft-logo.webp" type="image/webp" />
+        <source srcset="/decsoft-logo.jpg" type="image/jpeg" />
         <img src="/decsoft-logo.jpg" alt="Decsoft Logo" />
       </picture>
       <ul class="header-links">
@@ -15,10 +15,10 @@
     </nav>
     <section class="header-hero">
       <picture>
-        <source srcset="/hero.webp" type="image/webp" />
-        <source srcset="/hero@960.webp" type="image/webp" media="(min-width: 900px)" />
-        <source srcset="/hero@960.jpg" type="image/jpeg"/>
+        <source srcset="/hero.webp" type="image/webp" media="(min-width: 900px)" />
         <source srcset="/hero.jpg" type="image/jpeg" media="(min-width: 900px)"  />
+        <source srcset="/hero@960.webp" type="image/webp" />
+        <source srcset="/hero@960.jpg" type="image/jpeg"/>
         <img src="/hero.jpg" alt="Decsoft Logo" />
       </picture>
     </section>
